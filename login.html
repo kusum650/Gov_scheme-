@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Schemesathi</title>
+
+  <style>
+    /* ===== GLOBAL THEME ===== */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #dfe9f3, #c3dfe8, #d4fcf4);
+      color: #1a2a33;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.4), transparent);
+      z-index: -1;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 60px;
+      background-color: #2c5d73;
+      color: white;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      align-items: center;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+    }
+
+    .nav-links a.active {
+      border-bottom: 2px solid white;
+    }
+
+    .btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: none;
+      background-color: white;
+      color: #2c5d73;
+      cursor: pointer;
+    }
+
+    /* ===== LOGIN SECTION ===== */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 85vh;
+    }
+
+    /* Card */
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(44, 93, 115, 0.2);
+    }
+
+    .login-box h2 {
+      margin-bottom: 25px;
+      color: #1b3c53;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .login-btn,
+    .logout-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 25px;
+      background: #2c5d73;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">Schemesathi</div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="login.html" class="active">Login</a>
+      <a href="register.html">Register</a>
+      <a href="scheme.html">Schemes</a>
+    </div>
+  </div>
+
+  <!-- Login -->
+  <div class="login-container">
+    <div class="login-box">
+
+      <h2 id="title">User Login</h2>
+
+      <!-- LOGIN FORM -->
+      <form id="loginForm">
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="username" required>
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="password" required>
+        </div>
+
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <!-- LOGGED IN UI -->
+      <div id="loggedInBox" class="hidden">
+        <p>✅ You are logged in</p>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+
+    // Check login on page load
+    window.onload = async function () {
+      if (localStorage.getItem("user")) {
+        showLoggedInUI();
+        return;
+      }
+      try {
+        let res = await fetch("http://localhost:3000/check-auth", {
+          credentials: "include"
+        });
+
+        let data = await res.json();
+
+        if (data.loggedIn) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          showLoggedInUI();
+        }
+      } catch (err) {
+        console.log("Server not running");
+      }
+    };
+
+    // Login
+    document.getElementById("loginForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      let username = document.getElementById("username").value;
+      let password = document.getElementById("password").value;
+
+      try {
+        let res = await fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({ username, password })
+        });
+
+        let data = await res.json();
+
+        if (data.success) {
+          alert("Login Successful ✅");
+          localStorage.setItem("user", JSON.stringify(data.user));
+          showLoggedInUI();
+        } else {
+          alert("Invalid Username or Password ❌");
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("Server not running ❌\nDetailed Error: " + err.message);
+      }
+    });
+
+    // Show Logged In UI
+    function showLoggedInUI() {
+      document.getElementById("loginForm").classList.add("hidden");
+      document.getElementById("loggedInBox").classList.remove("hidden");
+      document.getElementById("title").innerText = "Welcome Back";
+    }
+
+    // Logout
+    async function logout() {
+      localStorage.removeItem("user");
+      try {
+        await fetch("http://localhost:3000/logout", {
+          credentials: "include"
+        });
+      } catch(e) {}
+
+      alert("Logged out");
+      location.reload();
+    }
+
+  </script>
+
+<script src="nav.js"></script>
+</body>
+
+</html>

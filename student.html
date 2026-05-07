@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Details | Schemesathi</title>
+
+<style>
+
+/* ===== GLOBAL THEME ===== */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #dfe9f3, #c3dfe8, #d4fcf4);
+  color: #1a2a33;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top left, rgba(255,255,255,0.4), transparent);
+  z-index: -1;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 60px;
+  background-color: #2c5d73;
+  color: white;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  width: 65%;
+  margin: 40px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 6px 20px rgba(44,93,115,0.2);
+}
+
+/* ===== STEPPER ===== */
+.stepper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.step {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+}
+
+.step.active { background: #2c5d73; }
+.step.completed { background: #4caf50; }
+
+.line {
+  flex: 1;
+  height: 4px;
+  background: #ccc;
+}
+
+.line.active { background: #2c5d73; }
+
+/* ===== FORM ===== */
+h2 {
+  color: #1b3c53;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: 500;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Sections */
+.step-content {
+  display: none;
+}
+
+.step-content.active {
+  display: block;
+}
+
+/* Buttons */
+.buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background: #2c5d73;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #aaa;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <div class="logo">Schemesathi</div>
+  <div class="nav-links">
+    <a href="abc.html">Home</a>
+    <a href="schemes.html">Schemes</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step active">1</div>
+    <div class="line"></div>
+    <div class="step">2</div>
+    <div class="line"></div>
+    <div class="step">3</div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step-content active">
+    <h2>Basic Student Details</h2>
+
+    <label>Age</label>
+    <input type="number">
+
+    <label>Gender</label>
+    <select>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+
+    <label>State / District</label>
+    <input type="text">
+
+    <label>Category</label>
+    <select>
+      <option>General</option>
+      <option>OBC</option>
+      <option>SC</option>
+      <option>ST</option>
+    </select>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step-content">
+    <h2>Education Details</h2>
+
+    <label>Current Education Level</label>
+    <select>
+      <option>School</option>
+      <option>Diploma</option>
+      <option>Undergraduate</option>
+      <option>Postgraduate</option>
+    </select>
+
+    <label>Course / Field</label>
+    <input type="text">
+
+    <label>Institution Type</label>
+    <select>
+      <option>Government</option>
+      <option>Private</option>
+    </select>
+
+    <label>Are you receiving any scholarship?</label>
+    <select>
+      <option>Yes</option>
+      <option>No</option>
+    </select>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step-content">
+    <h2>Income & Eligibility</h2>
+
+    <label>Annual Family Income</label>
+    <input type="number">
+
+    <label>Disability Status</label>
+    <select>
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+
+    <label>Minority Status</label>
+    <select>
+      <option>No</option>
+      <option>Yes</option>
+    </select>
+  </div>
+
+  <!-- Buttons -->
+  <div class="buttons">
+    <button id="prevBtn" onclick="prevStep()" disabled>Previous</button>
+    <button onclick="nextStep()">Next</button>
+  </div>
+
+</div>
+
+<script>
+let currentStep = 0;
+
+const steps = document.querySelectorAll(".step");
+const contents = document.querySelectorAll(".step-content");
+const lines = document.querySelectorAll(".line");
+
+function showStep(index) {
+  contents.forEach((c, i) => {
+    c.classList.toggle("active", i === index);
+  });
+
+  steps.forEach((s, i) => {
+    s.classList.remove("active", "completed");
+
+    if (i < index) {
+      s.classList.add("completed");
+    } else if (i === index) {
+      s.classList.add("active");
+    }
+  });
+
+  lines.forEach((l, i) => {
+    l.classList.toggle("active", i < index);
+  });
+
+  document.getElementById("prevBtn").disabled = index === 0;
+}
+
+function nextStep() {
+  if (currentStep < contents.length - 1) {
+    currentStep++;
+    showStep(currentStep);
+  } else {
+    alert("Form submitted successfully!");
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    showStep(currentStep);
+  }
+}
+
+showStep(currentStep);
+</script>
+
+<script src='nav.js'></script>
+</body>
+</html>
